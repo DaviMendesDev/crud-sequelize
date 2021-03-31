@@ -1,8 +1,7 @@
-import only from 'only';
 import { Request, Response } from 'express'
 
 function bearerToken (req: Request): string | undefined {
-    const authorizationToken: string | undefined = req.header.authorization;
+    const authorizationToken: string | undefined = req.headers.authorization;
     if (!authorizationToken)
         return undefined;
     
@@ -11,7 +10,7 @@ function bearerToken (req: Request): string | undefined {
 }
 
 function failResponse(res: Response): Response {
-    return res.json({
+    return res.status(403).json({
         success: false,
         message: 'Authentication failed',
     });
