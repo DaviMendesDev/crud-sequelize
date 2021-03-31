@@ -26,6 +26,8 @@
     "express": "^4.17.1",
     "express-winston": "^4.1.0",
     "gulp": "^4.0.2",
+    "only": "^0.0.2",
+    "sequelize": "^6.6.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {

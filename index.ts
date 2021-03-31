@@ -6,7 +6,7 @@ import debug from 'debug';
 import dotenv from 'dotenv';
 import api from './routes/api';
 const app: express.Application = express();
-const port = 8000;
+const port: number|string = process.env.PORT || 8000;
 const debugLog: debug.IDebugger = debug('app');
 
 dotenv.config();
