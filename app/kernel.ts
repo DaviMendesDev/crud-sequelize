@@ -5,6 +5,9 @@ import * as expressWinston from 'express-winston';
 import debug from 'debug';
 import dbInfo from '../config/database';
 
+let connection: undefined | Sequelize = undefined;
+let logger: undefined | debug.Debugger = undefined;
+
 interface KernelInfo {
     connection?: Sequelize,
     logger: debug.Debugger,
@@ -12,7 +15,7 @@ interface KernelInfo {
 }
 
 function kernel (): KernelInfo {
-    const debugLog: debug.IDebugger = debug('app');
+    logger = debug('app');
 
     const loggerOptions: expressWinston.LoggerOptions = {
         transports: [new winston.transports.Console()],
@@ -25,23 +28,24 @@ function kernel (): KernelInfo {
     
     if (process.env.DEBUG) {
         process.on('unhandledRejection', function(reason) {
-            debugLog('Unhandled Rejection:', reason);
+            logger?.call(logger, ['Unhandled Rejection:', reason]);
             process.exit(1);
         });
     } else {
         loggerOptions.meta = false;
     }
 
-    const connection = new Sequelize({
+    connection = new Sequelize({
         ...dbInfo,
-        logging: debugLog
+        logging: logger
     });
 
     return {
         connection: connection,
-        logger: debugLog,
+        logger: logger,
         loggerExpress: expressWinston.logger(loggerOptions)
     }
 }
 
 export default kernel;
+export { connection, logger };
