@@ -1,13 +1,17 @@
 import { Model, DataTypes, Op } from 'sequelize';
+import validator from 'validator';
+import { M } from '../helpers/only';
 import { connection as conn } from '../kernel';
 
 if (! conn)
     throw new Error("Connection doens't working");
 
+const defaultExclude = ['password'];
+
 class User extends Model {
-    static async whereToken(jwtoken: string): Promise<User | null> {
+    static async whereToken(jwtoken: string, exclude: Array<string> = defaultExclude): Promise<User | null> {
         return User.findOne({
-            attributes: { exclude: ['password'] },
+            attributes: { exclude: exclude },
             where: {
                 jwtoken: {
                     [Op.eq]: jwtoken,
@@ -15,16 +19,20 @@ class User extends Model {
             },
         });
     }
+
+    static async whereEmail(email: string, exclude: Array<string> = defaultExclude): Promise<User | null> {
+        return User.findOne({
+            attributes: { exclude: exclude },
+            where: {
+                email: {
+                    [Op.eq]: email,
+                },
+            },
+        });
+    }
 };
 
 User.init({
-    id: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrementIdentity: true,
-    },
-
     name: {
         type: DataTypes.CITEXT,
         allowNull: false
@@ -43,6 +51,7 @@ User.init({
 
     age: {
         type: DataTypes.SMALLINT.UNSIGNED,
+        allowNull: false,
     },
 
     jwtoken: {
@@ -55,6 +64,13 @@ User.init({
     modelName: 'User',
 });
 
-User.sync();
+User.sync({ alter: true });
+
+export interface UserData {
+    name: string,
+    email: string,
+    password: string,
+    age: string|number,
+}
 
 export default User;

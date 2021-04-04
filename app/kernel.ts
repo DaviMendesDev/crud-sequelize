@@ -5,8 +5,8 @@ import * as expressWinston from 'express-winston';
 import debug from 'debug';
 import dbInfo from '../config/database';
 
-let connection: undefined | Sequelize = undefined;
-let logger: undefined | debug.Debugger = undefined;
+let connection: Sequelize;
+let logger: debug.Debugger;
 
 interface KernelInfo {
     connection?: Sequelize,

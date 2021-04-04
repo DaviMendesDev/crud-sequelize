@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import kernel from './app/kernel';
-const kernelInfo = kernel();
+import kn from './app/kernel';
+const kernel = kn();
 import './app/models/load_models';
 
 import api from './routes/api';
@@ -15,19 +15,19 @@ const port: number|string = process.env.PORT || 8000;
 app.use(express.json());
 app.use(cors());
 
-app.use(kernelInfo.loggerExpress);
+app.use(kernel.loggerExpress);
 app.use(api);
 
 app.listen(port, async () => {
     try {
-        if (kernelInfo.connection)
-            await kernelInfo.connection.authenticate();
+        if (kernel.connection)
+            await kernel.connection.authenticate();
         
-        kernelInfo.logger(`Connected to '${kernelInfo.connection?.config.database}'`);
+        kernel.logger(`Connected to '${kernel.connection?.config.database}'`);
     } catch (error) {
-        kernelInfo.logger(`Could not connect to '${kernelInfo.connection?.config.database}', reasons:`);
-        kernelInfo.logger(error);
+        kernel.logger(`Could not connect to '${kernel.connection?.config.database}', reasons:`);
+        kernel.logger(error);
     }
 
-    kernelInfo.logger(`Listen on ${port} port.`);
+    kernel.logger(`Listen on ${port} port.`);
 });
